@@ -1,0 +1,30 @@
+MaterialDef Unshaded {
+
+    MaterialParameters {
+        Vector3 AmbientLight
+        Vector3 LightDirection
+        Texture2D ColorMap
+        Vector2 NumTiles
+        //Float Time
+
+        // Alpha threshold for fragment discarding
+        Float AlphaDiscardThreshold (AlphaTestFallOff)
+
+    }
+
+    Technique {
+        VertexShader GLSL100:   Shaders/Cubes/Cubes.vert
+        FragmentShader GLSL100: Shaders/Cubes/Cubes.frag
+
+        WorldParameters {
+            WorldViewProjectionMatrix
+        }
+
+        Defines {
+            DISCARD_ALPHA : AlphaDiscardThreshold
+        }
+    }
+
+    Technique {
+    }
+}

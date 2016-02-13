@@ -1,0 +1,4 @@
+*.db
+build.xml
+*.MF
+nbproject/*
