@@ -4,12 +4,11 @@
  */
 package ethercubes.settings.implementation;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
 import ethercubes.data.Direction;
-import ethercubes.display.meshing.CubesMaterial;
 import ethercubes.listutil.BoolArrayList;
 import ethercubes.settings.BlockSettings;
+import java.util.ArrayList;
+import java.util.EnumMap;
 
 /**
  *

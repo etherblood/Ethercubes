@@ -4,14 +4,12 @@
  */
 package ethercubes;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import ethercubes.data.ChunkPosition;
 import ethercubes.data.ChunkSize;
 import ethercubes.data.GlobalBlockPosition;
 import ethercubes.settings.implementation.ChunkSettingsImpl;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *

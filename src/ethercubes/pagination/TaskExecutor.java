@@ -1,7 +1,6 @@
 package ethercubes.pagination;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -46,13 +45,12 @@ public class TaskExecutor {
     
     public void blockUntilFinished() {
         synchronized(this) {
-            if(remainingTasks.get() == 0) {
-                return;
-            }
-            try {
-                wait();
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
+            while(remainingTasks.get() != 0) {
+                try {
+                    wait();
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }

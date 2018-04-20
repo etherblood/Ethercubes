@@ -4,12 +4,12 @@
  */
 package ethercubes.world.implementation;
 
-import ethercubes.world.BlockWorld;
 import ethercubes.chunk.BlockChunk;
 import ethercubes.data.ChunkPosition;
 import ethercubes.data.ChunkSize;
 import ethercubes.data.GlobalBlockPosition;
 import ethercubes.settings.implementation.ChunkSettingsImpl;
+import ethercubes.world.BlockWorld;
 import ethercubes.world.ChunkWorld;
 import java.util.concurrent.ConcurrentHashMap;
 

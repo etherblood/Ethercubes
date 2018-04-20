@@ -31,7 +31,7 @@ public class SparseChunk implements BlockChunk {
 
     @Override
     public void setBlock(int x, int y, int z, byte value) {
-        setBlockFast(index(x, y, z), value);
+        setBlockFast(size.index(x, y, z), value);
     }
 
     public void setBlockFast(int index, byte value) {
@@ -44,8 +44,9 @@ public class SparseChunk implements BlockChunk {
                 blockValues.set(i, value);
             }
         } else if(value != baseBlock) {
-            blockIndices.insertAt(-i, index);
-            blockValues.insertAt(-i, value);
+            i = -i - 1;
+            blockIndices.insertAt(i, index);
+            blockValues.insertAt(i, value);
         }
     }
 
@@ -56,7 +57,7 @@ public class SparseChunk implements BlockChunk {
 
     @Override
     public byte getBlock(int x, int y, int z) {
-        return getBlockFast(index(x, y, z));
+        return getBlockFast(size.index(x, y, z));
     }
     
     public byte getBlockFast(int index) {
@@ -82,14 +83,5 @@ public class SparseChunk implements BlockChunk {
     @Override
     public ChunkPosition getPosition() {
         return position;
-    }
-
-    private int index(int x, int y, int z) {
-        int index = y;
-        index *= size.getZ();
-        index += z;
-        index *= size.getX();
-        index += x;
-        return index;
     }
 }

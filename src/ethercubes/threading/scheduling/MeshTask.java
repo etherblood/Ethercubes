@@ -4,17 +4,17 @@
  */
 package ethercubes.threading.scheduling;
 
+import ethercubes.chunk.BlockChunkReadonly;
+import ethercubes.chunk.Versioned;
+import ethercubes.data.ChunkPosition;
+import ethercubes.data.Direction;
+import ethercubes.display.meshing.ChunkMesher;
+import ethercubes.display.meshing.ChunkMeshingResult;
+import ethercubes.display.meshing.ChunkNode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
-import ethercubes.display.meshing.ChunkNode;
-import ethercubes.data.ChunkPosition;
-import ethercubes.chunk.BlockChunkReadonly;
-import ethercubes.chunk.Versioned;
-import ethercubes.data.Direction;
-import ethercubes.display.meshing.ChunkMesher;
-import ethercubes.display.meshing.ChunkMeshingResult;
 
 /**
  *

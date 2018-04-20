@@ -5,7 +5,6 @@
 package ethercubes.world.worldgen;
 
 import ethercubes.ChunkFactory;
-import ethercubes.data.ChunkPosition;
 import ethercubes.chunk.BlockChunk;
 import ethercubes.chunk.FastXZYChunk;
 import ethercubes.chunk.HasNeighbors;

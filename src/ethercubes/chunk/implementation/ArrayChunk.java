@@ -2,17 +2,17 @@ package ethercubes.chunk.implementation;
 
 import ethercubes.chunk.BlockChunk;
 import ethercubes.chunk.DataXZY;
-import java.util.Arrays;
-import ethercubes.data.ChunkPosition;
-import ethercubes.data.ChunkSize;
-import ethercubes.data.LocalBlockPosition;
 import ethercubes.chunk.FastXZYChunk;
 import ethercubes.chunk.HasNeighbors;
 import ethercubes.chunk.NeighborVisibilityChunk;
 import ethercubes.chunk.PoolChunk;
 import ethercubes.chunk.Versioned;
+import ethercubes.data.ChunkPosition;
+import ethercubes.data.ChunkSize;
 import ethercubes.data.Direction;
+import ethercubes.data.LocalBlockPosition;
 import ethercubes.data.NeighborVisibility;
+import java.util.Arrays;
 import java.util.EnumMap;
 
 /**
@@ -41,7 +41,7 @@ public class ArrayChunk implements BlockChunk, FastXZYChunk, PoolChunk, DataXZY,
     @Override
     public final byte getBlock(int x, int y, int z) {
         checkInBounds(x, y, z);
-        return getBlockFast(index(x, y, z));
+        return getBlockFast(size.index(x, y, z));
     }
     
     @Override
@@ -51,7 +51,7 @@ public class ArrayChunk implements BlockChunk, FastXZYChunk, PoolChunk, DataXZY,
     @Override
     public final void setBlock(int x, int y, int z, byte value) {
         checkInBounds(x, y, z);
-        setBlockFast(index(x, y, z), value);
+        setBlockFast(size.index(x, y, z), value);
     }
     
     public final void setLayerBlocks(int y, byte value) {
@@ -59,8 +59,8 @@ public class ArrayChunk implements BlockChunk, FastXZYChunk, PoolChunk, DataXZY,
     }
     @Override
     public final void setLayersBlocks(int startY, int endY, byte value) {
-        int startIndex = indexY(startY);
-        int endIndex = indexY(endY);
+        int startIndex = size.index(0, startY, 0);
+        int endIndex = size.index(0, endY, 0);
         setBlocksFast(startIndex, endIndex, value);
     }
     @Override
@@ -154,18 +154,6 @@ public class ArrayChunk implements BlockChunk, FastXZYChunk, PoolChunk, DataXZY,
 
     private void setBlocksFast(int startIndex, int endIndex, byte value) {
         Arrays.fill(blocks, startIndex, endIndex, value);
-    }
-    
-    private int index(int x, int y, int z) {
-        int index = y;
-        index *= size.getZ();
-        index += z;
-        index *= size.getX();
-        index += x;
-        return index;
-    }
-    private int indexY(int y) {
-        return size.getX() * size.getY() * y;
     }
     
 }

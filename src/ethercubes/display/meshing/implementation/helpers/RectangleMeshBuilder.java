@@ -1,11 +1,11 @@
 package ethercubes.display.meshing.implementation.helpers;
 
-import ethercubes.listutil.ShortArrayList;
-import ethercubes.listutil.FloatArrayList;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.util.BufferUtils;
+import ethercubes.listutil.FloatArrayList;
+import ethercubes.listutil.ShortArrayList;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 

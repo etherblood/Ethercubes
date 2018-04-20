@@ -4,7 +4,6 @@
  */
 package ethercubes.settings;
 
-import com.jme3.material.Material;
 import ethercubes.data.Direction;
 
 /**

@@ -4,15 +4,15 @@
  */
 package ethercubes;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import ethercubes.chunk.ChunkReadonly;
 import ethercubes.chunk.HasNeighbors;
 import ethercubes.chunk.NeighborVisibilityChunk;
 import ethercubes.data.ChunkPosition;
 import ethercubes.data.Direction;
 import ethercubes.data.NeighborVisibility;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *

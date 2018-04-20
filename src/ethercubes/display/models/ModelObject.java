@@ -4,10 +4,10 @@
  */
 package ethercubes.display.models;
 
-import java.util.ArrayList;
 import com.jme3.animation.*;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**

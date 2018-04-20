@@ -8,9 +8,9 @@ import ethercubes.chunk.BlockChunk;
 import ethercubes.chunk.HasNeighbors;
 import ethercubes.data.ChunkPosition;
 import ethercubes.data.ChunkSize;
+import ethercubes.data.Direction;
 import ethercubes.data.GlobalBlockPosition;
 import ethercubes.data.PositionLimit;
-import ethercubes.data.Direction;
 
 /**
  *
@@ -42,9 +42,11 @@ public class AllmightyBlockChunkWorld<C extends BlockChunk & HasNeighbors<C>> ex
         }
     }
     
+    @Override
     public boolean isLegal(GlobalBlockPosition pos) {
         return isLegal(getConverter().getContainerPosition(pos));
     }
+    @Override
     public boolean isLegal(ChunkPosition pos) {
         for (PositionLimit limit : limits) {
             if(!limit.isLegal(pos)) {

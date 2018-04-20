@@ -1,6 +1,5 @@
 package ethercubes.cam;
 
-import com.jme3.collision.MotionAllowedListener;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;

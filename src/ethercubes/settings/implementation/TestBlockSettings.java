@@ -4,11 +4,6 @@
  */
 package ethercubes.settings.implementation;
 
-import com.jme3.app.Application;
-import com.jme3.asset.AssetManager;
-import com.jme3.texture.Texture;
-import ethercubes.display.meshing.CubesMaterial;
-
 
 /**
  *

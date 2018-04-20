@@ -10,14 +10,14 @@ public class TestTaskExecutor {
         ExecutorService executor = Executors.newFixedThreadPool(5);
         TaskExecutor testTaskExecutorImpl = new TaskExecutor(executor);
         ArrayList<Runnable> tasks = new ArrayList<Runnable>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             final int value = i;
             tasks.add(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(10 + value);
-                    System.out.println("a " + System.currentTimeMillis());
+                    Thread.sleep(10 + 10 * value);
+                    System.out.println(value + " a " + System.currentTimeMillis());
                 } catch (InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }

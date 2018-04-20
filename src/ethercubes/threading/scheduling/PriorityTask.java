@@ -4,10 +4,8 @@
  */
 package ethercubes.threading.scheduling;
 
-import ethercubes.chunk.implementation.ArrayChunk;
-import ethercubes.data.ChunkPosition;
-import ethercubes.chunk.BlockChunk;
 import ethercubes.chunk.BlockChunkReadonly;
+import ethercubes.data.ChunkPosition;
 
 /**
  *

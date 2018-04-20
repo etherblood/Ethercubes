@@ -4,7 +4,6 @@ import ethercubes.ChunkFactory;
 import ethercubes.chunk.BlockChunk;
 import ethercubes.chunk.FastXZYChunk;
 import ethercubes.settings.ChunkSettings;
-import ethercubes.world.implementation.AbstractBlockChunkWorld;
 
 /**
  *

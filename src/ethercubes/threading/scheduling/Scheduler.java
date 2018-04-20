@@ -4,11 +4,11 @@
  */
 package ethercubes.threading.scheduling;
 
+import ethercubes.chunk.BlockChunk;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import ethercubes.chunk.BlockChunk;
 
 /**
  *

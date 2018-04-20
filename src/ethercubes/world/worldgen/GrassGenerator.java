@@ -1,10 +1,10 @@
 package ethercubes.world.worldgen;
 
-import ethercubes.statistics.TimeStatistics;
 import ethercubes.chunk.ChunkReadonly;
 import ethercubes.chunk.FastXZYChunk;
 import ethercubes.chunk.HasNeighbors;
 import ethercubes.data.Direction;
+import ethercubes.statistics.TimeStatistics;
 
 /**
  *

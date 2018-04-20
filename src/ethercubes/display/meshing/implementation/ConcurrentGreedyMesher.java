@@ -8,17 +8,16 @@ import ethercubes.data.ChunkSize;
 import ethercubes.display.meshing.ChunkMesher;
 import ethercubes.display.meshing.ChunkMeshingResult;
 import ethercubes.settings.BlockSettings;
-import ethercubes.settings.implementation.ChunkSettingsImpl;
 
 /**
  *
  * @author Philipp
  */
 public class ConcurrentGreedyMesher<C extends FastXZYChunk & HasNeighbors<C> & VersionedReadonly & ChunkReadonly> implements ChunkMesher<C> {
-    private final ThreadLocal<ChunkMesher<C>> locals = new ThreadLocal<ChunkMesher<C>>();
+    private static final ThreadLocal<ChunkMesher> locals = new ThreadLocal<>();
     private final BlockSettings blockSettings;
     private final ChunkSize size;
-
+    
     public ConcurrentGreedyMesher(BlockSettings blockSettings, ChunkSize size) {
         this.blockSettings = blockSettings;
         this.size = size;
@@ -31,6 +30,7 @@ public class ConcurrentGreedyMesher<C extends FastXZYChunk & HasNeighbors<C> & V
             mesher = new GreedyMesher<C>(blockSettings, size);
             locals.set(mesher);
         }
+        System.out.println("meshing " + chunk.getPosition());
         return mesher.generateMesh(chunk, version);
     }
 }

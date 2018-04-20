@@ -5,7 +5,6 @@ import ethercubes.chunk.HasNeighbors;
 import ethercubes.data.ChunkSize;
 import ethercubes.data.Direction;
 import java.util.ArrayList;
-import ethercubes.data.LocalBlockPosition;
 
 /**
  *

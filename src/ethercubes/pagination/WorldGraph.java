@@ -1,16 +1,14 @@
 package ethercubes.pagination;
 
-import com.jme3.app.Application;
 import com.jme3.material.Material;
 import com.jme3.scene.Node;
 import ethercubes.chunk.ChunkReadonly;
 import ethercubes.chunk.VersionedReadonly;
 import ethercubes.data.ChunkPosition;
-import ethercubes.display.meshing.ChunkNode;
 import ethercubes.display.meshing.ChunkMesher;
 import ethercubes.display.meshing.ChunkMeshingResult;
+import ethercubes.display.meshing.ChunkNode;
 import ethercubes.statistics.TimeStatistics;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 

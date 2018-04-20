@@ -12,20 +12,18 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.util.BufferUtils;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
 import ethercubes.chunk.ChunkReadonly;
 import ethercubes.chunk.HasNeighborsReadonly;
 import ethercubes.chunk.NeighborVisibilityChunk;
 import ethercubes.data.ChunkPosition;
 import ethercubes.data.Direction;
 import ethercubes.data.NeighborVisibility;
-import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  *

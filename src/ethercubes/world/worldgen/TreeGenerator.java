@@ -1,13 +1,13 @@
 package ethercubes.world.worldgen;
 
-import ethercubes.world.worldgen.templates.TreeTemplate1;
-import ethercubes.statistics.TimeStatistics;
 import ethercubes.chunk.BlockChunk;
 import ethercubes.chunk.HasNeighbors;
-import java.util.Random;
 import ethercubes.data.ChunkPosition;
 import ethercubes.data.ChunkSize;
 import ethercubes.settings.implementation.TileBlockSettings;
+import ethercubes.statistics.TimeStatistics;
+import ethercubes.world.worldgen.templates.TreeTemplate1;
+import java.util.Random;
 
 /**
  *

@@ -4,10 +4,9 @@
  */
 package ethercubes;
 
+import ethercubes.data.ChunkPosition;
 import java.util.HashSet;
 import java.util.Set;
-import ethercubes.data.ChunkPosition;
-import ethercubes.data.ChunkSize;
 
 /**
  *

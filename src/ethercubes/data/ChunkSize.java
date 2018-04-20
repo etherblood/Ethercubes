@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ethercubes.data;
 
 /**
@@ -35,41 +31,30 @@ public final class ChunkSize {
     public boolean contains(int x, int y, int z) {
         return 0 <= x && x < this.x && 0 <= y && y < this.y && 0 <= z && z < this.z;
     }
+    
+    public int index(int x, int y, int z) {
+        return (y * this.z + z) * this.x + x;
+    }
 
     @Override
     public String toString() {
-        return ChunkSize.class.getSimpleName() + "{" + "x=" + x + ", y=" + y + ", z=" + z + '}';
+        return getClass().getSimpleName() + "{" + "x=" + x + ", y=" + y + ", z=" + z + '}';
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 97 * hash + this.x;
-        hash = 97 * hash + this.y;
         hash = 97 * hash + this.z;
+        hash = 97 * hash + this.y;
         return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        return equals((ChunkSize) obj);
+        return obj instanceof ChunkSize && equals((ChunkSize) obj);
     }
     public boolean equals(ChunkSize size) {
-        if (this.x != size.x) {
-            return false;
-        }
-        if (this.y != size.y) {
-            return false;
-        }
-        if (this.z != size.z) {
-            return false;
-        }
-        return true;
+        return x == size.x && y == size.y && z == size.z;
     }
 }

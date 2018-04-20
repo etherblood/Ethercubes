@@ -1,9 +1,6 @@
 package ethercubes.display.meshing.implementation;
 
-import ethercubes.display.meshing.implementation.helpers.RectangleMeshBuilder;
 import com.jme3.math.Vector3f;
-import ethercubes.statistics.TimeStatistics;
-import java.util.Arrays;
 import ethercubes.chunk.ChunkReadonly;
 import ethercubes.chunk.FastXZYChunk;
 import ethercubes.chunk.HasNeighbors;
@@ -12,13 +9,24 @@ import ethercubes.data.Direction;
 import ethercubes.display.meshing.ChunkMesher;
 import ethercubes.display.meshing.ChunkMeshingResult;
 import ethercubes.display.meshing.implementation.helpers.AmbientOcclusionHelper;
+import ethercubes.display.meshing.implementation.helpers.RectangleMeshBuilder;
 import ethercubes.settings.BlockSettings;
+import ethercubes.statistics.TimeStatistics;
+import java.util.Arrays;
 
 /**
  *
  * @author Philipp
  */
 public final class GreedyMesher<C extends FastXZYChunk & HasNeighbors<C> & ChunkReadonly> implements ChunkMesher<C> {
+    
+    private static final float[] AMBIENT_LIGHT_LEVELS = new float[]{0.1f, 0.4f, 0.7f, 1};
+    private static final int[] AMBIENT_SHADOW_MASKS = new int[9];
+    private static final Direction[] AXIS_DIRECTION = new Direction[3];
+    private static final int[] CORNERS_ORDER = new int[]{0, 1, 2, 3};
+    private static final int[] NEIGHBOR_CORNERS_ORDER = new int[]{0, 2, 1, 3};
+    private static final int[] FLIPPED_ORDER = new int[]{1, 3, 0, 2};
+    private static final int[] FLIPPED_NEIGHBOR_ORDER = new int[]{2, 3, 0, 1};
 
     private final BlockSettings blockSettings;
     private final int invalidTile;
@@ -32,9 +40,6 @@ public final class GreedyMesher<C extends FastXZYChunk & HasNeighbors<C> & Chunk
     private final int[] dv = new int[3];
     private final int[] mask;
     private final int[] neighborMask;
-    private final float[] ambientLightLevels = new float[]{0.1f, 0.4f, 0.7f, 1};
-    private final int[] ambientShadowMasks = new int[9];
-    private final Direction[] axisDirection = new Direction[3];
     private RectangleMeshBuilder builder;
     private C chunk;
     private int rectangleWidth, rectangleHeight, axis0, axis1, axis2, maskIndex, size0, size1, size2, pos0, pos1, pos2, index0, index1, index2, neighborPos0;
@@ -45,11 +50,30 @@ public final class GreedyMesher<C extends FastXZYChunk & HasNeighbors<C> & Chunk
     private Vector3f normal, inverseNormal;
     private Direction neighborDirection, inverseNeighborDirection;
     private C neighborChunk;
-    private final int[] cornerOrders = new int[]{0, 1, 2, 3};
-    private final int[] neighborCornerOrders = new int[]{0, 2, 1, 3};
-    private final static int[] flippedOrder = new int[]{1, 3, 0, 2};
-    private final static int[] flippedNeighborOrder = new int[]{2, 3, 0, 1};
 
+    static {
+        AXIS_DIRECTION[0] = Direction.EAST;
+        AXIS_DIRECTION[1] = Direction.UP;
+        AXIS_DIRECTION[2] = Direction.NORTH;
+        
+        AMBIENT_SHADOW_MASKS[0] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperLeft, AmbientOcclusionHelper.upperLeft);
+        AMBIENT_SHADOW_MASKS[1] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperLeft, AmbientOcclusionHelper.lowerLeft)
+                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerLeft, AmbientOcclusionHelper.upperLeft);
+        AMBIENT_SHADOW_MASKS[2] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerLeft, AmbientOcclusionHelper.lowerLeft);
+        AMBIENT_SHADOW_MASKS[3] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperLeft, AmbientOcclusionHelper.upperRight)
+                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperRight, AmbientOcclusionHelper.upperLeft);
+        AMBIENT_SHADOW_MASKS[4] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerRight, AmbientOcclusionHelper.upperLeft)
+                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerLeft, AmbientOcclusionHelper.upperRight)
+                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperLeft, AmbientOcclusionHelper.lowerRight)
+                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperRight, AmbientOcclusionHelper.lowerLeft);
+        AMBIENT_SHADOW_MASKS[5] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerLeft, AmbientOcclusionHelper.lowerRight)
+                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerRight, AmbientOcclusionHelper.lowerLeft);
+        AMBIENT_SHADOW_MASKS[6] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperRight, AmbientOcclusionHelper.upperRight);
+        AMBIENT_SHADOW_MASKS[7] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperRight, AmbientOcclusionHelper.lowerRight)
+                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerRight, AmbientOcclusionHelper.upperRight);
+        AMBIENT_SHADOW_MASKS[8] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerRight, AmbientOcclusionHelper.lowerRight);
+    }
+    
     public GreedyMesher(BlockSettings blockSettings, ChunkSize size) {
         this.blockSettings = blockSettings;
         invalidTile = blockSettings.invalidTile();
@@ -75,29 +99,8 @@ public final class GreedyMesher<C extends FastXZYChunk & HasNeighbors<C> & Chunk
         dv[1] = 0;
         dv[2] = 0;
 
-        axisDirection[0] = Direction.EAST;
-        axisDirection[1] = Direction.UP;
-        axisDirection[2] = Direction.NORTH;
-
         Arrays.fill(mask, invalidTile);
         Arrays.fill(neighborMask, invalidTile);
-
-        ambientShadowMasks[0] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperLeft, AmbientOcclusionHelper.upperLeft);
-        ambientShadowMasks[1] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperLeft, AmbientOcclusionHelper.lowerLeft)
-                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerLeft, AmbientOcclusionHelper.upperLeft);
-        ambientShadowMasks[2] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerLeft, AmbientOcclusionHelper.lowerLeft);
-        ambientShadowMasks[3] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperLeft, AmbientOcclusionHelper.upperRight)
-                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperRight, AmbientOcclusionHelper.upperLeft);
-        ambientShadowMasks[4] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerRight, AmbientOcclusionHelper.upperLeft)
-                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerLeft, AmbientOcclusionHelper.upperRight)
-                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperLeft, AmbientOcclusionHelper.lowerRight)
-                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperRight, AmbientOcclusionHelper.lowerLeft);
-        ambientShadowMasks[5] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerLeft, AmbientOcclusionHelper.lowerRight)
-                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerRight, AmbientOcclusionHelper.lowerLeft);
-        ambientShadowMasks[6] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperRight, AmbientOcclusionHelper.upperRight);
-        ambientShadowMasks[7] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.upperRight, AmbientOcclusionHelper.lowerRight)
-                | AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerRight, AmbientOcclusionHelper.upperRight);
-        ambientShadowMasks[8] = AmbientOcclusionHelper.singleOcclusionMask(AmbientOcclusionHelper.lowerRight, AmbientOcclusionHelper.lowerRight);
     }
 
     @Override
@@ -131,7 +134,7 @@ public final class GreedyMesher<C extends FastXZYChunk & HasNeighbors<C> & Chunk
         direction[2] = 0;
         direction[axis0] = 1;
 
-        neighborDirection = axisDirection[axis0];
+        neighborDirection = AXIS_DIRECTION[axis0];
         inverseNeighborDirection = neighborDirection.inverse();
 
         normal = new Vector3f(direction[0], direction[1], direction[2]);
@@ -157,8 +160,6 @@ public final class GreedyMesher<C extends FastXZYChunk & HasNeighbors<C> & Chunk
         for (axis0 = 0; axis0 < 3; axis0++) {
             initAxis();
             while (pos0 < size0) {
-//                neighborPos0 = (pos0 + 1) % size0;//use this instead?
-//                if (neighborPos0 == 0) {
                 if (pos0 + 1 == size0) {
                     neighborPos0 = 0;
                     neighborChunk = chunk.getNeighbor(neighborDirection);
@@ -201,10 +202,10 @@ public final class GreedyMesher<C extends FastXZYChunk & HasNeighbors<C> & Chunk
                 pos0++;
 
                 if (!skipA) {
-                    createRectanglesFromMask(mask, cornerOrders, flippedOrder, normal);
+                    createRectanglesFromMask(mask, CORNERS_ORDER, FLIPPED_ORDER, normal);
                 }
                 if (!skipB) {
-                    createRectanglesFromMask(neighborMask, neighborCornerOrders, flippedNeighborOrder, inverseNormal);
+                    createRectanglesFromMask(neighborMask, NEIGHBOR_CORNERS_ORDER, FLIPPED_NEIGHBOR_ORDER, inverseNormal);
                 }
             }
         }
@@ -216,13 +217,13 @@ public final class GreedyMesher<C extends FastXZYChunk & HasNeighbors<C> & Chunk
             int pos_1 = pos1 + i;
             C n = c;
             if (pos_1 == -1) {
-                n = c.getNeighbor(axisDirection[axis1].inverse());
+                n = c.getNeighbor(AXIS_DIRECTION[axis1].inverse());
                 if (n == null) {
                     continue;
                 }
                 pos_1 = size1 - 1;
             } else if (pos_1 == size1) {
-                n = c.getNeighbor(axisDirection[axis1]);
+                n = c.getNeighbor(AXIS_DIRECTION[axis1]);
                 if (n == null) {
                     continue;
                 }
@@ -232,13 +233,13 @@ public final class GreedyMesher<C extends FastXZYChunk & HasNeighbors<C> & Chunk
                 int pos_2 = pos2 + j;
                 C n2 = n;
                 if (pos_2 == -1) {
-                    n2 = n.getNeighbor(axisDirection[axis2].inverse());
+                    n2 = n.getNeighbor(AXIS_DIRECTION[axis2].inverse());
                     if (n2 == null) {
                         continue;
                     }
                     pos_2 = size2 - 1;
                 } else if (pos_2 == size2) {
-                    n2 = n.getNeighbor(axisDirection[axis2]);
+                    n2 = n.getNeighbor(AXIS_DIRECTION[axis2]);
                     if (n2 == null) {
                         continue;
                     }
@@ -246,7 +247,7 @@ public final class GreedyMesher<C extends FastXZYChunk & HasNeighbors<C> & Chunk
                 }
 
                 if (n2.getBlockFast(pos_0 * index0 + pos_1 * index1 + pos_2 * index2) != 0) {
-                    result |= ambientShadowMasks[3 * i + j + 4];
+                    result |= AMBIENT_SHADOW_MASKS[3 * i + j + 4];
                 }
             }
         }
@@ -275,13 +276,13 @@ public final class GreedyMesher<C extends FastXZYChunk & HasNeighbors<C> & Chunk
                     builder.prepareRectNormals(currentNormal);
                     addTextureCoords(tile, rectangleWidth, rectangleHeight);
 
-                    builder.addCorner(position[0], position[1], position[2], ambientLightLevels[lightInfo & 0x3]);
+                    builder.addCorner(position[0], position[1], position[2], AMBIENT_LIGHT_LEVELS[lightInfo & 0x3]);
                     lightInfo >>>= 2;
-                    builder.addCorner(position[0] + du[0], position[1] + du[1], position[2] + du[2], ambientLightLevels[lightInfo & 0x3]);
+                    builder.addCorner(position[0] + du[0], position[1] + du[1], position[2] + du[2], AMBIENT_LIGHT_LEVELS[lightInfo & 0x3]);
                     lightInfo >>>= 2;
-                    builder.addCorner(position[0] + dv[0], position[1] + dv[1], position[2] + dv[2], ambientLightLevels[lightInfo & 0x3]);
+                    builder.addCorner(position[0] + dv[0], position[1] + dv[1], position[2] + dv[2], AMBIENT_LIGHT_LEVELS[lightInfo & 0x3]);
                     lightInfo >>>= 2;
-                    builder.addCorner(position[0] + du[0] + dv[0], position[1] + du[1] + dv[1], position[2] + du[2] + dv[2], ambientLightLevels[lightInfo & 0x3]);
+                    builder.addCorner(position[0] + du[0] + dv[0], position[1] + du[1] + dv[1], position[2] + du[2] + dv[2], AMBIENT_LIGHT_LEVELS[lightInfo & 0x3]);
 
                     du[axis1] = 0;
                     dv[axis2] = 0;

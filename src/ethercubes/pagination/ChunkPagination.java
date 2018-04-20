@@ -2,7 +2,7 @@ package ethercubes.pagination;
 
 import com.jme3.math.Vector3f;
 import ethercubes.data.ChunkPosition;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,49 +13,27 @@ public class ChunkPagination {
     private int radius0 = 10;
     private RadiusCubicLoadZone level0, level1, level2;
     
-    public List<ChunkUpdateTask> generateDelTasks(Vector3f center) {
-        ArrayList<ChunkUpdateTask> queue = new ArrayList<ChunkUpdateTask>();
+    public List<ChunkPosition> generateDelTasks(Vector3f center) {
         if(level0 != null) {
             RadiusCubicLoadZone new0 = new RadiusCubicLoadZone(center, radius0, 2);
-
-            for (ChunkPosition pos : level0.subtract(new0)) {
-                queue.add(new ChunkUpdateTask(pos, -1));
-            }
+            return level0.subtract(new0);
         }
-        return queue;
+        return Collections.emptyList();
     }
     
-    public List<ChunkUpdateTask> generateTasks0(Vector3f center) {
-        ArrayList<ChunkUpdateTask> queue = new ArrayList<ChunkUpdateTask>();
-        
+    public List<ChunkPosition> generateTasks0(Vector3f center) {
         RadiusCubicLoadZone new0 = new RadiusCubicLoadZone(center, radius0, 2);
-        
-        for (ChunkPosition pos : new0.subtract(level0)) {
-            queue.add(new ChunkUpdateTask(pos, 0));
-        }
-        return queue;
+        return new0.subtract(level0);
     }
     
-    public List<ChunkUpdateTask> generateTasks1(Vector3f center) {
-        ArrayList<ChunkUpdateTask> queue = new ArrayList<ChunkUpdateTask>();
-        
+    public List<ChunkPosition> generateTasks1(Vector3f center) {
         RadiusCubicLoadZone new1 = new RadiusCubicLoadZone(center, radius0, 1);
-        
-        for (ChunkPosition pos : new1.subtract(level1)) {
-            queue.add(new ChunkUpdateTask(pos, 1));
-        }
-        return queue;
+        return new1.subtract(level1);
     }
     
-    public List<ChunkUpdateTask> generateTasks2(Vector3f center) {
-        ArrayList<ChunkUpdateTask> queue = new ArrayList<ChunkUpdateTask>();
-        
+    public List<ChunkPosition> generateTasks2(Vector3f center) {
         RadiusCubicLoadZone new2 = new RadiusCubicLoadZone(center, radius0, 0);
-        
-        for (ChunkPosition pos : new2.subtract(level2)) {
-            queue.add(new ChunkUpdateTask(pos, 2));
-        }
-        return queue;
+        return new2.subtract(level2);
     }
     
     public void setNewCenter(Vector3f center) {

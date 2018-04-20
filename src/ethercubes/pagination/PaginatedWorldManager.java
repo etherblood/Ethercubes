@@ -37,10 +37,10 @@ public class PaginatedWorldManager<T extends BlockChunk & Versioned & FastXZYChu
     }
     
     public void update(Vector3f center) {
-        List<ChunkUpdateTask> unloadChunksTasks;
-        List<ChunkUpdateTask> generateTerrainTasks;
-        List<ChunkUpdateTask> generateStructuresTasks;
-        List<ChunkUpdateTask> generateMeshesTasks;
+        List<ChunkPosition> unloadChunksTasks;
+        List<ChunkPosition> generateTerrainTasks;
+        List<ChunkPosition> generateStructuresTasks;
+        List<ChunkPosition> generateMeshesTasks;
         synchronized(pagination) {
             unloadChunksTasks = pagination.generateDelTasks(center);
             generateTerrainTasks = pagination.generateTasks0(center);
@@ -49,36 +49,34 @@ public class PaginatedWorldManager<T extends BlockChunk & Versioned & FastXZYChu
             pagination.setNewCenter(center);
         }
         
-        ChunkPosition[] positions = invalidChunks.toArray(new ChunkPosition[0]);
-        for (ChunkPosition chunkPosition : positions) {
-            generateMeshesTasks.add(new ChunkUpdateTask(chunkPosition, 2));
-        }
-        invalidChunks.removeAll(Arrays.asList(positions));
+        List<ChunkPosition> positions = new ArrayList<>(invalidChunks);
+        generateMeshesTasks.addAll(positions);
+        invalidChunks.removeAll(positions);
         
-        executor.submitTasks(convertTasks(unloadChunksTasks));
-        executor.submitTasks(convertTasks(generateTerrainTasks));
+        executor.submitTasks(convertTasks(unloadChunksTasks, -1));
+        executor.submitTasks(convertTasks(generateTerrainTasks, 0));
         executor.blockUntilFinished();
-        executor.submitTasks(convertTasks(generateStructuresTasks));
+        executor.submitTasks(convertTasks(generateStructuresTasks, 1));
         executor.blockUntilFinished();
-        executor.submitTasks(convertTasks(generateMeshesTasks));
+        executor.submitTasks(convertTasks(generateMeshesTasks, 2));
         executor.blockUntilFinished();
     }
     
-    public List<Runnable> convertTasks(List<ChunkUpdateTask> tasks) {
+    public List<Runnable> convertTasks(List<ChunkPosition> tasks, final int level) {
         List<Runnable> list = new ArrayList<Runnable>();
-        for (final ChunkUpdateTask task : tasks) {
+        for (final ChunkPosition pos : tasks) {
             list.add(new Runnable() {
                 @Override
                 public void run() {
-                    if(task.level == -1) {
-                        graph.remove(task.pos);
-                        worldGen.delete(task.pos);
-                    } else if(task.level == 0) {
-                        worldGen.update0(task.pos);
-                    } else if(task.level == 1) {
-                        worldGen.update1(task.pos);
+                    if(level == -1) {
+                        graph.remove(pos);
+                        worldGen.delete(pos);
+                    } else if(level == 0) {
+                        worldGen.update0(pos);
+                    } else if(level == 1) {
+                        worldGen.update1(pos);
                     } else {
-                        T chunk = worldData.getChunk(task.pos);
+                        T chunk = worldData.getChunk(pos);
                         if(chunk != null) {
                             graph.generateMesh(chunk);
                         }

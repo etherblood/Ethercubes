@@ -1,14 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ethercubes.display.models;
 
 
-import java.net.URL;
-import java.util.List;
-import java.util.LinkedList;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.material.RenderState.FaceCullMode;
@@ -20,6 +12,9 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import java.io.IOException;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import org.jdom2.Attribute;
 import org.jdom2.DataConversionException;
 import org.jdom2.Document;
@@ -252,10 +247,6 @@ public class ModelSkin{
             Material material = geometry.getMaterial();
             materialFactory.generateAmbientColor(material, materialAmbient);
             material.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
-            RigidBodyControl rigidBodyControl = geometry.getControl(RigidBodyControl.class);
-            if(rigidBodyControl != null){
-                rigidBodyControl.getCollisionShape().setScale(scaleVector);
-            }
             geometry.setUserData("layer", 3);
         }
     }

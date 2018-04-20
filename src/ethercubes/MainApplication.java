@@ -1,8 +1,5 @@
 package ethercubes;
 
-import ethercubes.statistics.TimeStatistics;
-import ethercubes.data.ChunkSize;
-import ethercubes.data.GlobalBlockPosition;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -16,32 +13,32 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.FogFilter;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.system.AppSettings;
 import com.jme3.util.SkyFactory;
-import ethercubes.world.implementation.AllmightyBlockChunkWorld;
 import ethercubes.chunk.compression.CompressedChunks;
-import ethercubes.chunk.implementation.ArrayChunkFactory;
 import ethercubes.chunk.implementation.ArrayChunk;
+import ethercubes.chunk.implementation.ArrayChunkFactory;
 import ethercubes.chunk.implementation.ChunkPoolImpl;
-import ethercubes.data.NeighborVisibilityCalculatorImpl;
-import ethercubes.display.meshing.CubesMaterial;
-import ethercubes.settings.implementation.TileBlockSettings;
+import ethercubes.data.ChunkSize;
+import ethercubes.data.GlobalBlockPosition;
 import ethercubes.display.meshing.ChunkMesher;
+import ethercubes.display.meshing.CubesMaterial;
 import ethercubes.display.meshing.implementation.ConcurrentGreedyMesher;
+import ethercubes.display.models.MaterialFactory;
+import ethercubes.display.models.ModelObject;
 import ethercubes.pagination.PaginatedWorldManager;
 import ethercubes.pagination.TaskExecutor;
 import ethercubes.pagination.WorldGen;
 import ethercubes.pagination.WorldGraph;
 import ethercubes.settings.implementation.ChunkSettingsImpl;
 import ethercubes.settings.implementation.TestBlockSettings;
-import ethercubes.display.models.MaterialFactory;
-import ethercubes.display.models.ModelObject;
+import ethercubes.settings.implementation.TileBlockSettings;
+import ethercubes.statistics.TimeStatistics;
 import ethercubes.units.Hitbox;
+import ethercubes.world.implementation.AllmightyBlockChunkWorld;
 import ethercubes.world.worldgen.ConcurrentTerrainChunkFactory;
 import ethercubes.world.worldgen.OreGenerator;
 import ethercubes.world.worldgen.TreeGenerator;
@@ -101,11 +98,11 @@ public class MainApplication extends SimpleApplication {
     public static void main(String[] args) {
         MainApplication app = new MainApplication();
 
-        NeighborVisibilityCalculatorImpl.test();
+//        NeighborVisibilityCalculatorImpl.test();
 
         AppSettings settings = new AppSettings(true);
         settings.setResolution(1280, 720);
-        settings.setFrameRate(200);
+        settings.setVSync(true);
         app.setSettings(settings);
 
         app.setShowSettings(false);
@@ -514,8 +511,7 @@ public class MainApplication extends SimpleApplication {
                 if (isPressed) {
                     return;
                 }
-                chunkPool.compact();
-                System.gc();
+                chunkPool.sout();
             }
         }, "gc");
     }

@@ -2,12 +2,12 @@ package ethercubes.world.worldgen;
 
 import ethercubes.chunk.BlockChunk;
 import ethercubes.chunk.HasNeighbors;
-import ethercubes.statistics.TimeStatistics;
-import java.util.Random;
 import ethercubes.data.ChunkPosition;
 import ethercubes.data.ChunkSize;
 import ethercubes.settings.implementation.TileBlockSettings;
+import ethercubes.statistics.TimeStatistics;
 import ethercubes.world.worldgen.templates.OreTemplate;
+import java.util.Random;
 
 /**
  *

@@ -4,14 +4,14 @@
  */
 package ethercubes.data;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import ethercubes.Util;
 import ethercubes.chunk.BlockChunkReadonly;
 import ethercubes.chunk.ChunkReadonly;
 import ethercubes.chunk.FastXZYChunk;
 import ethercubes.chunk.NeighborVisibilityChunk;
 import ethercubes.settings.BlockSettings;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class NeighborVisibilityCalculatorImpl<C extends FastXZYChunk & NeighborVisibilityChunk & ChunkReadonly> implements NeighborVisibilityCalculator<C> {
